@@ -2,49 +2,75 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>巴厘岛景点分布总览 · 2026.09.29-10.06</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>巴厘岛景点分布 · 点击景点看小红书真实评价</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  html,body{margin:0;padding:0;background:#f5f5f4;font-family:"PingFang SC","Microsoft YaHei",sans-serif;}
-  #wrap{width:1900px;height:1350px;position:relative;}
-  #map{width:100%;height:100%;}
-  .title{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:1000;
-    background:rgba(255,255,255,.95);padding:10px 28px;border-radius:12px;
-    box-shadow:0 2px 12px rgba(0,0,0,.18);text-align:center;}
-  .title h1{margin:0;font-size:26px;color:#1c1917;}
-  .title p{margin:4px 0 0;font-size:14px;color:#57534e;}
-  .legend{position:absolute;bottom:20px;left:20px;z-index:1000;background:rgba(255,255,255,.95);
-    padding:12px 16px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.18);font-size:15px;line-height:1.9;}
-  .legend b{font-size:16px;}
-  .dot{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:8px;vertical-align:middle;}
-  .poi-label{background:transparent;border:none;box-shadow:none;font-size:13px;font-weight:600;
-    color:#1c1917;text-shadow:0 0 4px #fff,0 0 4px #fff,0 0 6px #fff;white-space:nowrap;}
-  .region-label{background:transparent;border:none;box-shadow:none;font-size:17px;font-weight:800;
-    letter-spacing:2px;white-space:nowrap;text-shadow:0 0 6px #fff,0 0 6px #fff;}
+  * { box-sizing: border-box; }
+  html,body { margin:0; padding:0; height:100%; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
+  #map { position:fixed; inset:0; }
+  .title { position:fixed; top:12px; left:50%; transform:translateX(-50%); z-index:1000;
+    background:rgba(255,255,255,.95); padding:8px 20px; border-radius:12px;
+    box-shadow:0 2px 12px rgba(0,0,0,.18); text-align:center; max-width:92vw; }
+  .title h1 { margin:0; font-size:18px; color:#1c1917; }
+  .title p { margin:2px 0 0; font-size:12px; color:#78716c; }
+  .legend { position:fixed; bottom:16px; left:12px; z-index:1000; background:rgba(255,255,255,.95);
+    padding:10px 14px; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.18); font-size:12px; line-height:1.8; }
+  .dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+  .poi-label { background:transparent; border:none; box-shadow:none; font-size:12px; font-weight:600;
+    color:#1c1917; text-shadow:0 0 4px #fff,0 0 4px #fff,0 0 6px #fff; white-space:nowrap; }
+  .region-label { background:transparent; border:none; box-shadow:none; font-size:15px; font-weight:800;
+    letter-spacing:2px; white-space:nowrap; text-shadow:0 0 6px #fff,0 0 6px #fff; }
+  #card { position:fixed; z-index:1100; background:#fff; box-shadow:0 4px 24px rgba(0,0,0,.25);
+    overflow-y:auto; transition:transform .25s ease, opacity .25s ease; }
+  #card.hidden { pointer-events:none; opacity:0; }
+  @media (min-width:768px) {
+    #card { top:0; right:0; width:380px; height:100%; }
+    #card.hidden { transform:translateX(100%); opacity:1; }
+  }
+  @media (max-width:767px) {
+    #card { left:0; right:0; bottom:0; max-height:62vh; border-radius:16px 16px 0 0; }
+    #card.hidden { transform:translateY(105%); opacity:1; }
+    .legend { display:none; }
+  }
+  #card img { width:100%; height:220px; object-fit:cover; display:block; }
+  .noimg { width:100%; height:90px; display:flex; align-items:center; justify-content:center;
+    background:#f5f5f4; color:#a8a29e; font-size:13px; }
+  .card-body { padding:14px 16px 20px; position:relative; }
+  .card-body h2 { margin:0 0 6px; font-size:19px; color:#1c1917; padding-right:36px; }
+  .tag { display:inline-block; font-size:11px; padding:2px 8px; border-radius:99px; color:#fff; margin-bottom:4px; }
+  .sec { margin-top:10px; font-size:13.5px; line-height:1.65; color:#44403c; }
+  .sec b { display:block; font-size:12.5px; margin-bottom:2px; }
+  .sec.play b { color:#16a34a; }
+  .sec.fit b  { color:#0284c7; }
+  .sec.bad  { background:#fef2f2; border-radius:8px; padding:8px 10px; }
+  .sec.bad b { color:#dc2626; }
+  .src { margin-top:12px; font-size:11px; color:#a8a29e; }
+  #closeBtn { position:absolute; top:10px; right:10px; z-index:2; width:32px; height:32px; border:none;
+    border-radius:50%; background:rgba(0,0,0,.45); color:#fff; font-size:16px; cursor:pointer; }
 </style>
 </head>
 <body>
-<div id="wrap">
-  <div id="map"></div>
-  <div class="title"><h1>巴厘岛热门景点分布总览</h1><p>2026.09.29 – 10.06 · 8天7晚 · 按五大区域分色标注</p></div>
-  <div class="legend">
-    <b>区域图例</b><br>
-    <span class="dot" style="background:#ef4444"></span>南部沿海（库塔/水明漾/金巴兰/乌鲁瓦图/努沙杜瓦）<br>
-    <span class="dot" style="background:#22c55e"></span>中部乌布（梯田/神庙/雨林）<br>
-    <span class="dot" style="background:#f97316"></span>东部（天空之门/水上皇宫/图兰奔潜水）<br>
-    <span class="dot" style="background:#a855f7"></span>中北部山区（火山/湖庙/罗威纳）<br>
-    <span class="dot" style="background:#0ea5e9"></span>离岛（佩尼达/蓝梦岛）<br>
-    <span class="dot" style="background:#1c1917"></span>机场 DPS
-  </div>
+<div id="map"></div>
+<div class="title"><h1>巴厘岛景点分布 · 小红书真实评价版</h1><p>点击任意景点圆点，查看 20 篇小红书笔记的玩什么 / 适合谁 / 避雷</p></div>
+<div class="legend">
+  <span class="dot" style="background:#ef4444"></span>南部沿海
+  <span class="dot" style="background:#22c55e"></span>中部乌布
+  <span class="dot" style="background:#f97316"></span>东部
+  <span class="dot" style="background:#a855f7"></span>中北部山区
+  <span class="dot" style="background:#0ea5e9"></span>离岛
+  <span class="dot" style="background:#1c1917"></span>机场
 </div>
+<div id="card" class="hidden"><button id="closeBtn" onclick="hideCard()">✕</button><div id="cardContent"></div></div>
+
 <script>
-const map = L.map('map',{zoomControl:true,attributionControl:false}).setView([-8.42,115.35],10);
+const map = L.map('map',{zoomControl:true,attributionControl:false}).setView([-8.42,115.32],10);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(map);
 
 const COLORS = {south:'#ef4444', ubud:'#22c55e', east:'#f97316', north:'#a855f7', island:'#0ea5e9', airport:'#1c1917'};
+const REGION_NAME = {south:'南部沿海', ubud:'中部乌布', east:'东部', north:'中北部山区', island:'离岛', airport:'机场'};
 
-// 区域范围圈（半透明，表达"分布"概念）
 const regions = [
   {c:[-8.76,115.16], r:13000, color:COLORS.south,  name:'南部沿海 · 距机场15-60分钟', lc:[-8.83,115.13]},
   {c:[-8.51,115.28], r:11000, color:COLORS.ubud,   name:'中部乌布 · 1.5小时',        lc:[-8.50,115.40]},
@@ -57,53 +83,183 @@ regions.forEach(g=>{
   L.marker(g.lc,{icon:L.divIcon({className:'region-label',html:`<span style="color:${g.color}">${g.name}</span>`,iconSize:[0,0],iconAnchor:[-10,8]}),interactive:false}).addTo(map);
 });
 
-// [名称, 纬度, 经度, 区域, 热度]
+// 所有文案均摘自小红书精读笔记原声（20篇）
 const POIS = [
-  // 南部
-  ['库塔海滩·冲浪',-8.7184,115.1686,'south'],
-  ['水明漾·Beach Club',-8.6913,115.1582,'south'],
-  ['苍古 Canggu',-8.6478,115.1385,'south'],
-  ['海神庙 Tanah Lot',-8.6212,115.0868,'south'],
-  ['金巴兰·日落BBQ',-8.7849,115.1585,'south'],
-  ['神鹰广场 GWK',-8.8104,115.1677,'south'],
-  ['乌鲁瓦图断崖庙·火舞',-8.8291,115.0849,'south'],
-  ['努沙杜瓦·度假区',-8.8004,115.2345,'south'],
-  ['绿碗海滩·小众秘境',-8.8486,115.1713,'south'],
-  ['Melasti海滩·Timbis滑翔伞',-8.8575,115.1565,'south'],
-  ['Pandawa海滩',-8.8447,115.1871,'south'],
-  ['蓝点海滩·Single Fin日落',-8.8197,115.0881,'south'],
-  // 乌布
-  ['乌布皇宫·市场',-8.5069,115.2625,'ubud'],
-  ['乌布水宫·出片',-8.5085,115.2596,'ubud'],
-  ['圣猴森林',-8.5187,115.2589,'ubud'],
-  ['德格拉朗梯田·秋千',-8.4312,115.2778,'ubud'],
-  ['圣泉寺',-8.4160,115.3153,'ubud'],
-  ['Tegenungan瀑布',-8.5756,115.2897,'ubud'],
-  ['Tukad Cepung洞穴瀑布',-8.4423,115.3839,'ubud'],
-  ['彭丽普兰村',-8.4230,115.3577,'ubud'],
-  // 东部
-  ['天空之门 Lempuyang',-8.3920,115.6315,'east'],
-  ['蒂尔塔冈加水上皇宫',-8.4118,115.5876,'east'],
-  ['图兰奔·OW考证/自由号沉船',-8.2744,115.5927,'east'],
-  // 中北部
-  ['布拉坦湖水神庙',-8.2752,115.1668,'north'],
-  ['巴杜尔火山·金塔马尼',-8.2422,115.3755,'north'],
-  ['罗威纳·海豚',-8.1597,115.0278,'north'],
-  // 离岛
-  ['精灵海滩 Kelingking',-8.7523,115.4726,'island'],
-  ['破碎海滩·天神浴池',-8.7336,115.4453,'island'],
-  ['钻石海滩',-8.7747,115.6123,'island'],
-  ['蓝梦岛·恶魔的眼泪',-8.6977,115.4315,'island'],
-  ['金银岛·黄桥',-8.6945,115.4470,'island'],
-  // 机场
-  ['✈ 登巴萨机场 DPS',-8.7467,115.1668,'airport'],
+{name:'乌鲁瓦图断崖庙', lat:-8.8291, lng:115.0849, region:'south', img:'images/uluwatu.jpg',
+ play:'悬崖步道看情人崖海景 → 18:00 Kecak 火舞 → 日落，"巴厘岛颜值天花板"',
+ fit:'首刷必去；慢节奏度假的人',
+ bad:'泼猴是真的猛：多人墨镜/近视镜被叼走咬坏；火舞票要提前买', src:'1606赞·306赞·192赞笔记'},
+{name:'库塔海滩', lat:-8.7184, lng:115.1686, region:'south', img:'images/kuta.jpg',
+ play:'新手冲浪（"浪很规律，我第一次就抓到浪"）+ 日落能看机场飞机起落',
+ fit:'想学冲浪的、爱热闹的；住这配套最全',
+ bad:'沙滩质量很一般；冲浪需要一点运动基础', src:'384赞·1606赞·3439赞笔记'},
+{name:'水明漾', lat:-8.6913, lng:115.1582, region:'south', img:null,
+ play:'设计师店+brunch+Potato Head 日落；"最舒服的游客答案，生活方式拉满"',
+ fit:'派对脑袋、爱逛吃；去哪都方便',
+ bad:'Beach Club 低消 ¥200+/人；海一般', src:'192赞·1584赞笔记'},
+{name:'苍古 Canggu', lat:-8.6478, lng:115.1385, region:'south', img:'images/finns.jpg',
+ play:'FINNS Beach Club"里面都很放松"；周日 La Brisa 集市；白人多、冲浪氛围',
+ fit:'外向型、喜欢冲浪和海边 club 的',
+ bad:'FINNS 低消不便宜；集市只有周日有', src:'1606赞·1584赞·471赞笔记'},
+{name:'金巴兰海滩', lat:-8.7849, lng:115.1585, region:'south', img:'images/jimbaran.jpg',
+ play:'沙滩烛光海鲜 BBQ 看日落，"老套却依然浪漫"；也可在酒店顶楼泳池看',
+ fit:'情侣、到达第一晚（离机场近）',
+ bad:'海鲜价高味一般，"来了不惊艳，不来有点遗憾"；点单先看价', src:'192赞·306赞·3439赞笔记'},
+{name:'Timbis 滑翔伞', lat:-8.8575, lng:115.1565, region:'south', img:'images/paragliding.jpg',
+ play:'携程订 ¥228/10分钟含 GoPro 视频，印度洋海岸线上空，"毫无失重感，起飞落地都稳"',
+ fit:'恐高星人也能冲；与情人崖/Melasti 顺路',
+ bad:'没风会停飞（留备选）；下午排队久还可能遇"VIP插队"→ 赶上午11点场；现场买贵', src:'1769赞·1584赞·384赞笔记'},
+{name:'Melasti 海滩', lat:-8.8575, lng:115.1665, region:'south', img:null,
+ play:'滑翔伞基地下方的白沙滩，很多老外冲浪',
+ fit:'玩滑翔伞顺脚下',
+ bad:'悬崖公路"没必要特意去"', src:'1769赞·1584赞笔记'},
+{name:'绿碗海滩', lat:-8.8486, lng:115.1713, region:'south', img:'images/greenbowl.jpg',
+ play:'"人少景美"，只有几个游客和冲浪者，还能抬头看到滑翔伞',
+ fit:'想躲开人群找清净海滩的',
+ bad:'要下约 200 级台阶', src:'306赞笔记'},
+{name:'蓝点海滩 Single Fin', lat:-8.8197, lng:115.0881, region:'south', img:'images/bluepoint.jpg',
+ play:'悬崖餐厅吃晚饭看日落，"非常惬意"',
+ fit:'乌鲁瓦图行程的收尾晚餐位',
+ bad:'17:00 刚过就很难抢到靠边座位', src:'306赞笔记'},
+{name:'努沙杜瓦', lat:-8.8004, lng:115.2345, region:'south', img:'images/nusadua.jpg',
+ play:'纯泡酒店；东边适合看日出；丽思卡尔顿有圈起来的安全游泳海域（有救生员）',
+ fit:'目标就是住酒店的人，"接近满分"',
+ bad:'"出了酒店几乎啥也没有"；体验巴厘岛只能算及格', src:'192赞·3439赞·306赞笔记'},
+{name:'神鹰广场 GWK', lat:-8.8104, lng:115.1677, region:'south', img:'images/gwk.jpg',
+ play:'看巨型神鹰雕像，"挺有特点"',
+ fit:'顺路打卡（和金巴兰/乌鲁瓦图同线）',
+ bad:'收费登楼不值，没必要去', src:'1606赞笔记'},
+{name:'海神庙', lat:-8.6212, lng:115.0868, region:'south', img:null,
+ play:'涨潮孤岛日落；退潮可走到神庙下方',
+ fit:'住苍古时顺路去（30分钟）',
+ bad:'单独为它跑一趟略远', src:'gobaligo分区攻略+多篇提及'},
+{name:'Pandawa 海滩', lat:-8.8447, lng:115.1871, region:'south', img:null,
+ play:'等滑翔伞的间隙可以躺的海滩',
+ fit:'滑翔伞行程顺带',
+ bad:'无特别亮点', src:'1584赞笔记'},
+{name:'SPA（乌布/全岛）', lat:-8.5120, lng:115.2660, region:'ubud', img:null,
+ play:'"很便宜，手法好"，赶路疲惫做一次直接回血，约 ¥199/次',
+ fit:'所有人；每天结束都可以约一个',
+ bad:'无差评，全笔记共识强推', src:'637赞·384赞·409赞笔记'},
+{name:'圣猴森林', lat:-8.5187, lng:115.2589, region:'ubud', img:'images/monkey.jpg',
+ play:'猴子多还算文明；"下面有一段神庙逃亡的场景很棒"',
+ fit:'顺路逛逛',
+ bad:'也有说"可去可不去"；看好随身物品', src:'1606赞·384赞笔记'},
+{name:'德格拉朗梯田', lat:-8.4312, lng:115.2778, region:'ubud', img:'images/tegallalang.jpg',
+ play:'田埂漫步 + 大秋千拍照出片',
+ fit:'想出片的（秋千值得坐）',
+ bad:'⚠️ 评价两极："还没我们那边梯田壮观"；拍照收费项目多；台阶耗体力', src:'1606赞·471赞笔记·gobaligo'},
+{name:'乌布皇宫', lat:-8.5069, lng:115.2625, region:'ubud', img:'images/ubudpalace.jpg',
+ play:'园区很小 20 分钟逛完，免费；重点是晚上雷贡舞"很值得看"',
+ fit:'住乌布时傍晚顺路',
+ bad:'白天看普通，别专程来', src:'306赞·384赞笔记'},
+{name:'乌布水宫', lat:-8.5085, lng:115.2596, region:'ubud', img:'images/waterpalace.jpg',
+ play:'比皇宫大，"非常出片"，喷泉+宫门',
+ fit:'拍照党',
+ bad:'从头到脚都得裹沙龙，太热', src:'306赞笔记'},
+{name:'圣泉寺', lat:-8.4160, lng:115.3153, region:'ubud', img:'images/tirtaempul.jpg',
+ play:'千年圣泉净化仪式，可下水依次淋泉（下水的基本是欧美人）',
+ fit:'想体验文化仪式的',
+ bad:'排队约 1 小时；泉水冰凉；需穿沙龙', src:'306赞笔记·gobaligo'},
+{name:'Tegenungan 瀑布', lat:-8.5756, lng:115.2897, region:'ubud', img:'images/waterfall.jpg',
+ play:'离乌布市区最近的瀑布，"能近距离感受"',
+ fit:'不想爬太久山路的',
+ bad:'瀑布不算大', src:'306赞笔记·gobaligo'},
+{name:'Tukad Cepung 洞穴瀑布', lat:-8.4423, lng:115.3839, region:'ubud', img:null,
+ play:'洞穴光束瀑布，人少可游泳',
+ fit:'想出片+玩水的',
+ bad:'石头滑，穿溯溪鞋', src:'2094赞·95赞笔记'},
+{name:'乌布集市', lat:-8.5075, lng:115.2630, region:'ubud', img:null,
+ play:'手工品、藤编包、银饰；"砍价从 3 折开始聊"',
+ fit:'买伴手礼',
+ bad:'不砍价就是冤大头', src:'212赞·2094赞笔记'},
+{name:'Kuber ATV 越野', lat:-8.4600, lng:115.3000, region:'ubud', img:null,
+ play:'雨林 ATV 穿越',
+ fit:'想加点刺激项目的',
+ bad:'—', src:'2094赞笔记'},
+{name:'彭丽普兰村', lat:-8.4230, lng:115.3577, region:'ubud', img:null,
+ play:'全岛最干净古老村落，竹编房屋',
+ fit:'喜欢传统文化的',
+ bad:'—', src:'gobaligo笔记'},
+{name:'图兰奔 · OW考证/自由号沉船', lat:-8.2744, lng:115.5927, region:'east', img:'images/diving.jpg',
+ play:'OW 3天（泳池→近海→自由号沉船两潜）；流小适合新手；岸潜；海龟珊瑚常见',
+ fit:'想考潜水证的；"只适合潜水和考证，游客请勿前往"',
+ bad:'距机场 3 小时；耳压平衡个体差异大（有人胀痛流鼻血）→ 先花 ¥400 体验潜再决定；中文店 6xxx vs 本地店 O+A 联考 3000-4000', src:'457赞·44赞·114赞·66赞笔记'},
+{name:'天空之门 Lempuyang', lat:-8.3920, lng:115.6315, region:'east', img:null,
+ play:'阿贡火山门框倒影照',
+ fit:'摄影执念者',
+ bad:'现场排队 2-3 小时拍一张；附近善恶之门"买票就拍一个门排队1小时"= 拉完了', src:'1606赞笔记·gobaligo'},
+{name:'蒂尔塔冈加水上皇宫', lat:-8.4118, lng:115.5876, region:'east', img:null,
+ play:'买包鱼饲料走石雕步道喂巨型锦鲤，仙气十足',
+ fit:'和天空之门同线顺路',
+ bad:'远（单程 2.5-3 小时）', src:'gobaligo笔记'},
+{name:'巴杜尔火山 · 金塔马尼', lat:-8.2422, lng:115.3755, region:'north', img:null,
+ play:'"一定要早上日出去看"，景观咖啡厅吃早餐看火山湖景',
+ fit:'能早起的；可加火山徒步/温泉',
+ bad:'凌晨出发、山上冷 → 洋葱式穿搭', src:'1606赞·95赞笔记·gobaligo'},
+{name:'布拉坦湖水神庙', lat:-8.2752, lng:115.1668, region:'north', img:null,
+ play:'迷雾中若隐若现的"漂浮"湖庙，5万印尼盾纸币背面同款',
+ fit:'去北部/火山顺路',
+ bad:'远（2.5小时）；山上凉', src:'gobaligo笔记'},
+{name:'罗威纳追海豚', lat:-8.1597, lng:115.0278, region:'north', img:null,
+ play:'凌晨 4 点出海看成群海豚跃出水面，"那个画面真的绝了"',
+ fit:'非常想看海豚的执念型',
+ bad:'⚠️ 共识劝退：机场过去 4 小时 + 出海 1.5 小时，"游客比海豚多"，花两天看半小时', src:'3439赞·384赞·95赞笔记'},
+{name:'精灵坠崖 Kelingking', lat:-8.7523, lng:115.4726, region:'island', img:'images/kelingking.jpg',
+ play:'观景台俯瞰暴龙悬崖 + Tiffany 蓝海湾，"这个角度随便拍都好看"',
+ fit:'全岛第一名场面，必去',
+ bad:'⚠️ 景色 100 分体验 60 分：人挤在狭窄阶梯上拍照；下沙滩往返 2 小时台阶陡险暴晒（穿运动鞋+带水）', src:'1606赞·306赞·637赞笔记'},
+{name:'破碎海滩 + 天神浴池', lat:-8.7336, lng:115.4453, region:'island', img:'images/broken.jpg',
+ play:'海蚀天然拱门 + 绿松石岩石泳池，两景点相连步行 5 分钟，"好看也不拥挤"',
+ fit:'和精灵坠崖同线（西线）',
+ bad:'不能下水游泳（暗流危险）', src:'1606赞·306赞笔记'},
+{name:'钻石海滩', lat:-8.7747, lng:115.6123, region:'island', img:null,
+ play:'白色凿岩阶梯 + 钻石巨岩 + 渐层果冻海（东线）',
+ fit:'东线主景点',
+ bad:'阶梯陡、风大，拍照注意安全', src:'637赞·212赞笔记'},
+{name:'佩尼达浮潜', lat:-8.7400, lng:115.5000, region:'island', img:'images/snorkel.jpg',
+ play:'出海浮潜看珊瑚小鱼，"对第一次浮潜的人体验感拉满"',
+ fit:'潜水入门体验（考 OW 前的试水）',
+ bad:'⚠️ 评价两极：有人遇到"只有一个点水清、鱼少、没淡水冲凉"→ 选有淡水冲洗的口碑船家', src:'637赞·1606赞笔记'},
+{name:'蓝梦岛 · 恶魔的眼泪', lat:-8.6977, lng:115.4315, region:'island', img:null,
+ play:'大浪拍击悬崖激起水雾彩虹；"佩尼达青春版，比佩尼达舒服轻松"',
+ fit:'想慢节奏骑摩托看海的可住一晚',
+ bad:'别站太靠近边缘；风景比佩尼达逊色', src:'192赞笔记·gobaligo'},
+{name:'金银岛 · 黄桥', lat:-8.6945, lng:115.4470, region:'island', img:null,
+ play:'过黄桥就到，帐篷酒店看日落还有 DJ',
+ fit:'离岛躺平一晚',
+ bad:'—', src:'730赞笔记'},
+{name:'✈ 登巴萨机场 DPS', lat:-8.7467, lng:115.1668, region:'airport', img:null,
+ play:'国内/国际航站楼之间有摆渡车；伴手礼在市区 BINTANG/COCO 超市买（明码标价）',
+ fit:'—',
+ bad:'机场免税店价格非常高；打车用 Grab 别在机场拦车', src:'3439赞·212赞·613赞笔记'},
 ];
 
-POIS.forEach(([name,lat,lng,region])=>{
-  const color = COLORS[region];
-  const big = region==='airport';
-  L.circleMarker([lat,lng],{radius:big?9:7,color:'#fff',weight:2,fillColor:color,fillOpacity:1}).addTo(map);
-  L.marker([lat,lng],{icon:L.divIcon({className:'poi-label',html:name,iconSize:[0,0],iconAnchor:[-12,4]}),interactive:false}).addTo(map);
+const card = document.getElementById('card');
+const cardContent = document.getElementById('cardContent');
+function hideCard(){ card.classList.add('hidden'); }
+map.on('click', hideCard);
+
+POIS.forEach(p=>{
+  const color = COLORS[p.region];
+  const big = p.region==='airport';
+  const m = L.circleMarker([p.lat,p.lng],{radius:big?9:7,color:'#fff',weight:2,fillColor:color,fillOpacity:1}).addTo(map);
+  (window.__poiMarkers = window.__poiMarkers || []).push(m);
+  L.marker([p.lat,p.lng],{icon:L.divIcon({className:'poi-label',html:p.name,iconSize:[0,0],iconAnchor:[-12,4]}),interactive:false}).addTo(map);
+  m.on('click', (e)=>{
+    L.DomEvent.stopPropagation(e);
+    cardContent.innerHTML = `
+      ${p.img ? `<img src="${p.img}" alt="${p.name}">` : `<div class="noimg">📷 暂无小红书实图（精读笔记未含）</div>`}
+      <div class="card-body">
+        <h2>${p.name}</h2>
+        <span class="tag" style="background:${color}">${REGION_NAME[p.region]}</span>
+        <div class="sec play"><b>🎯 玩什么</b>${p.play}</div>
+        <div class="sec fit"><b>👤 适合谁</b>${p.fit}</div>
+        <div class="sec bad"><b>⚠️ 坏处 / 避雷</b>${p.bad}</div>
+        <div class="src">📕 内容来源：小红书精读笔记（${p.src}）</div>
+      </div>`;
+    card.classList.remove('hidden');
+  });
 });
 </script>
 </body>
