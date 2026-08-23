@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>巴厘岛景点分布总览 · 2026.09.29-10.06</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:#f5f5f4;font-family:"PingFang SC","Microsoft YaHei",sans-serif;}
+  #wrap{width:1900px;height:1350px;position:relative;}
+  #map{width:100%;height:100%;}
+  .title{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:1000;
+    background:rgba(255,255,255,.95);padding:10px 28px;border-radius:12px;
+    box-shadow:0 2px 12px rgba(0,0,0,.18);text-align:center;}
+  .title h1{margin:0;font-size:26px;color:#1c1917;}
+  .title p{margin:4px 0 0;font-size:14px;color:#57534e;}
+  .legend{position:absolute;bottom:20px;left:20px;z-index:1000;background:rgba(255,255,255,.95);
+    padding:12px 16px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.18);font-size:15px;line-height:1.9;}
+  .legend b{font-size:16px;}
+  .dot{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:8px;vertical-align:middle;}
+  .poi-label{background:transparent;border:none;box-shadow:none;font-size:13px;font-weight:600;
+    color:#1c1917;text-shadow:0 0 4px #fff,0 0 4px #fff,0 0 6px #fff;white-space:nowrap;}
+  .region-label{background:transparent;border:none;box-shadow:none;font-size:17px;font-weight:800;
+    letter-spacing:2px;white-space:nowrap;text-shadow:0 0 6px #fff,0 0 6px #fff;}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="map"></div>
+  <div class="title"><h1>巴厘岛热门景点分布总览</h1><p>2026.09.29 – 10.06 · 8天7晚 · 按五大区域分色标注</p></div>
+  <div class="legend">
+    <b>区域图例</b><br>
+    <span class="dot" style="background:#ef4444"></span>南部沿海（库塔/水明漾/金巴兰/乌鲁瓦图/努沙杜瓦）<br>
+    <span class="dot" style="background:#22c55e"></span>中部乌布（梯田/神庙/雨林）<br>
+    <span class="dot" style="background:#f97316"></span>东部（天空之门/水上皇宫/图兰奔潜水）<br>
+    <span class="dot" style="background:#a855f7"></span>中北部山区（火山/湖庙/罗威纳）<br>
+    <span class="dot" style="background:#0ea5e9"></span>离岛（佩尼达/蓝梦岛）<br>
+    <span class="dot" style="background:#1c1917"></span>机场 DPS
+  </div>
+</div>
+<script>
+const map = L.map('map',{zoomControl:true,attributionControl:false}).setView([-8.42,115.35],10);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(map);
+
+const COLORS = {south:'#ef4444', ubud:'#22c55e', east:'#f97316', north:'#a855f7', island:'#0ea5e9', airport:'#1c1917'};
+
+// 区域范围圈（半透明，表达"分布"概念）
+const regions = [
+  {c:[-8.76,115.16], r:13000, color:COLORS.south,  name:'南部沿海 · 距机场15-60分钟', lc:[-8.83,115.13]},
+  {c:[-8.51,115.28], r:11000, color:COLORS.ubud,   name:'中部乌布 · 1.5小时',        lc:[-8.50,115.40]},
+  {c:[-8.39,115.60], r:11000, color:COLORS.east,   name:'东部 · 2.5-3小时',          lc:[-8.36,115.71]},
+  {c:[-8.20,115.20], r:14000, color:COLORS.north,  name:'中北部山区 · 2.5-4小时',    lc:[-8.19,115.34]},
+  {c:[-8.74,115.52], r:10000, color:COLORS.island, name:'离岛 · 快艇40分钟',         lc:[-8.80,115.60]},
+];
+regions.forEach(g=>{
+  L.circle(g.c,{radius:g.r,color:g.color,weight:2,dashArray:'6 6',fillColor:g.color,fillOpacity:.07}).addTo(map);
+  L.marker(g.lc,{icon:L.divIcon({className:'region-label',html:`<span style="color:${g.color}">${g.name}</span>`,iconSize:[0,0],iconAnchor:[-10,8]}),interactive:false}).addTo(map);
+});
+
+// [名称, 纬度, 经度, 区域, 热度]
+const POIS = [
+  // 南部
+  ['库塔海滩·冲浪',-8.7184,115.1686,'south'],
+  ['水明漾·Beach Club',-8.6913,115.1582,'south'],
+  ['苍古 Canggu',-8.6478,115.1385,'south'],
+  ['海神庙 Tanah Lot',-8.6212,115.0868,'south'],
+  ['金巴兰·日落BBQ',-8.7849,115.1585,'south'],
+  ['神鹰广场 GWK',-8.8104,115.1677,'south'],
+  ['乌鲁瓦图断崖庙·火舞',-8.8291,115.0849,'south'],
+  ['努沙杜瓦·度假区',-8.8004,115.2345,'south'],
+  // 乌布
+  ['乌布皇宫·市场',-8.5069,115.2625,'ubud'],
+  ['圣猴森林',-8.5187,115.2589,'ubud'],
+  ['德格拉朗梯田·秋千',-8.4312,115.2778,'ubud'],
+  ['圣泉寺',-8.4160,115.3153,'ubud'],
+  ['Tegenungan瀑布',-8.5756,115.2897,'ubud'],
+  ['彭丽普兰村',-8.4230,115.3577,'ubud'],
+  // 东部
+  ['天空之门 Lempuyang',-8.3920,115.6315,'east'],
+  ['蒂尔塔冈加水上皇宫',-8.4118,115.5876,'east'],
+  ['图兰奔·OW考证/自由号沉船',-8.2744,115.5927,'east'],
+  // 中北部
+  ['布拉坦湖水神庙',-8.2752,115.1668,'north'],
+  ['巴杜尔火山·金塔马尼',-8.2422,115.3755,'north'],
+  ['罗威纳·海豚',-8.1597,115.0278,'north'],
+  // 离岛
+  ['精灵海滩 Kelingking',-8.7523,115.4726,'island'],
+  ['破碎海滩·天神浴池',-8.7336,115.4453,'island'],
+  ['钻石海滩',-8.7747,115.6123,'island'],
+  ['蓝梦岛·恶魔的眼泪',-8.6977,115.4315,'island'],
+  // 机场
+  ['✈ 登巴萨机场 DPS',-8.7467,115.1668,'airport'],
+];
+
+POIS.forEach(([name,lat,lng,region])=>{
+  const color = COLORS[region];
+  const big = region==='airport';
+  L.circleMarker([lat,lng],{radius:big?9:7,color:'#fff',weight:2,fillColor:color,fillOpacity:1}).addTo(map);
+  L.marker([lat,lng],{icon:L.divIcon({className:'poi-label',html:name,iconSize:[0,0],iconAnchor:[-12,4]}),interactive:false}).addTo(map);
+});
+</script>
+</body>
+</html>
