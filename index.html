@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>巴厘岛景点分布 · 点击景点看小红书真实评价</title>
+<title>巴厘岛 · 景点分布与四人行程</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="itinerary.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -55,7 +57,8 @@
 </head>
 <body>
 <div id="map"></div>
-<div class="title"><h1>巴厘岛景点分布 · 小红书真实评价版</h1><p>点击任意景点圆点，查看 20 篇小红书笔记的玩什么 / 适合谁 / 避雷（附原文链接）</p></div>
+<div class="title"><h1>巴厘岛 · 一起去看海</h1><p id="viewSubtitle">9.29 晚抵达 — 10.5 晚离开 · 四位同学 · 六晚</p><nav class="view-toggle" aria-label="地图视图"><button id="spotsToggle" type="button" aria-pressed="false">景点分布</button><button id="routeToggle" type="button" aria-pressed="true">行程路线</button></nav></div>
+<aside id="itineraryPanel" aria-label="行程安排"></aside>
 <div class="legend">
   <span class="dot" style="background:#ef4444"></span>南部沿海
   <span class="dot" style="background:#22c55e"></span>中部乌布
@@ -67,8 +70,10 @@
 <div id="card" class="hidden"><button id="closeBtn" onclick="hideCard()">✕</button><div id="cardContent"></div></div>
 
 <script>
-const map = L.map('map',{zoomControl:true,attributionControl:false}).setView([-8.42,115.32],10);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(map);
+const map = L.map('map',{zoomControl:false,attributionControl:true}).setView([-8.42,115.32],10);
+L.control.zoom({position:'topright'}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:18,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
+const spotsLayer = L.layerGroup();
 
 const COLORS = {south:'#ef4444', ubud:'#22c55e', east:'#f97316', north:'#a855f7', island:'#0ea5e9', airport:'#1c1917'};
 const REGION_NAME = {south:'南部沿海', ubud:'中部乌布', east:'东部', north:'中北部山区', island:'离岛', airport:'机场'};
@@ -81,8 +86,8 @@ const regions = [
   {c:[-8.74,115.52], r:10000, color:COLORS.island, name:'离岛 · 快艇40分钟',         lc:[-8.80,115.60]},
 ];
 regions.forEach(g=>{
-  L.circle(g.c,{radius:g.r,color:g.color,weight:2,dashArray:'6 6',fillColor:g.color,fillOpacity:.07}).addTo(map);
-  L.marker(g.lc,{icon:L.divIcon({className:'region-label',html:`<span style="color:${g.color}">${g.name}</span>`,iconSize:[0,0],iconAnchor:[-10,8]}),interactive:false}).addTo(map);
+  L.circle(g.c,{radius:g.r,color:g.color,weight:2,dashArray:'6 6',fillColor:g.color,fillOpacity:.07}).addTo(spotsLayer);
+  L.marker(g.lc,{icon:L.divIcon({className:'region-label',html:`<span style="color:${g.color}">${g.name}</span>`,iconSize:[0,0],iconAnchor:[-10,8]}),interactive:false}).addTo(spotsLayer);
 });
 
 // 小红书精读笔记链接库
@@ -108,6 +113,7 @@ const NOTES = {
   '393':  {t:'393赞《OW+AOW地点+潜店选择》', u:X+'686bf2da0000000012016849?xsec_token=ABUW93UKIxTzTnGGo3d53t7ccyHBqavfaq78lFE3Tn_Fw%3D&xsec_source='},
   '114':  {t:'114赞《巴厘岛学ow+aow潜店怎么选》', u:X+'6a034b5500000000380341dd?xsec_token=ABmsO5mR1GJ2UrvZX1g8Sn1kkxI7BLxb-LaLl3nqFemqs%3D&xsec_source='},
   '44':   {t:'44赞《图兰本潜水ow经验帖》', u:X+'6a257f39000000002202db7a?xsec_token=ABztyItEPtj2vIc848PEjIYREYZUlyVB3hh4gQyl5xszg%3D&xsec_source='},
+  'refvideo': {t:'《拒绝特种兵的巴厘岛六天五晚》参考视频', u:'https://www.xiaohongshu.com/explore/6aa36e850000000026017820'},
   'gobaligo': {t:'gobaligo《Top20分区全攻略》', u:'https://gobaligo.id/zh-cn/blog/bali-top-attractions-guide/'},
 };
 
@@ -245,10 +251,10 @@ const POIS = [
  play:'白色凿岩阶梯 + 钻石巨岩 + 渐层果冻海（东线）',
  fit:'东线主景点',
  bad:'阶梯陡、风大，拍照注意安全', refs:['637','212']},
-{name:'佩尼达浮潜', lat:-8.7400, lng:115.5000, region:'island', img:'images/snorkel.jpg',
- play:'出海浮潜看珊瑚小鱼，"对第一次浮潜的人体验感拉满"',
- fit:'潜水入门体验（考 OW 前的试水）',
- bad:'⚠️ 评价两极：有人遇到"只有一个点水清、鱼少、没淡水冲凉"→ 选有淡水冲洗的口碑船家', refs:['637','1606']},
+{name:'佩尼达 Manta 浮潜', lat:-8.7930, lng:115.5270, region:'island', img:'images/snorkel.jpg',
+ play:'海况允许时前往 Manta Point / Manta Bay，寻找魔鬼鱼并体验珊瑚海域浮潜',
+ fit:'本次行程核心海上项目；与精灵断崖组合成海陆一日',
+ bad:'魔鬼鱼为野生动物不能保证出现；Manta Point 船程更长，海况不合适会改点；确认救生衣、向导和淡水冲洗', refs:['refvideo','637','1606']},
 {name:'蓝梦岛 · 恶魔的眼泪', lat:-8.6977, lng:115.4315, region:'island', img:null,
  play:'大浪拍击悬崖激起水雾彩虹；"佩尼达青春版，比佩尼达舒服轻松"',
  fit:'想慢节奏骑摩托看海的可住一晚',
@@ -271,9 +277,9 @@ map.on('click', hideCard);
 POIS.forEach(p=>{
   const color = COLORS[p.region];
   const big = p.region==='airport';
-  const m = L.circleMarker([p.lat,p.lng],{radius:big?9:7,color:'#fff',weight:2,fillColor:color,fillOpacity:1}).addTo(map);
+  const m = L.circleMarker([p.lat,p.lng],{radius:big?9:7,color:'#fff',weight:2,fillColor:color,fillOpacity:1}).addTo(spotsLayer);
   (window.__poiMarkers = window.__poiMarkers || []).push(m);
-  L.marker([p.lat,p.lng],{icon:L.divIcon({className:'poi-label',html:p.name,iconSize:[0,0],iconAnchor:[-12,4]}),interactive:false}).addTo(map);
+  L.marker([p.lat,p.lng],{icon:L.divIcon({className:'poi-label',html:p.name,iconSize:[0,0],iconAnchor:[-12,4]}),interactive:false}).addTo(spotsLayer);
   m.on('click', (e)=>{
     L.DomEvent.stopPropagation(e);
     const links = p.refs.map(r=>`<a href="${NOTES[r].u}" target="_blank" rel="noopener">${NOTES[r].t}</a>`).join('<br>');
@@ -291,5 +297,6 @@ POIS.forEach(p=>{
   });
 });
 </script>
+<script src="itinerary.js"></script>
 </body>
 </html>

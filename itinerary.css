@@ -1,0 +1,46 @@
+.title { width: min(560px,calc(100vw - 100px)); }
+.view-toggle { display:flex; gap:4px; background:#eaece8; padding:4px; border-radius:10px; margin-top:8px; }
+.view-toggle button { flex:1; border:0; background:transparent; padding:9px 14px; border-radius:8px; cursor:pointer; color:#525952; font:600 13px inherit; }
+.view-toggle button[aria-pressed="true"] { background:#183f38; color:#fff; box-shadow:0 2px 5px #0002; }
+button:focus-visible,a:focus-visible { outline:3px solid #f59e0b; outline-offset:3px; }
+#itineraryPanel { position:fixed; z-index:1000; top:128px; bottom:24px; left:16px; width:336px; border:1px solid #e3e7df; border-radius:18px; overflow:auto; background:#fffffff5; box-shadow:0 8px 28px #14342920; color:#27352d; padding:18px; }
+#itineraryPanel[hidden] { display:none; }
+.trip-eyebrow { color:#62786c; font-size:11px; letter-spacing:2px; }
+#itineraryPanel h2 { font-size:23px; letter-spacing:-.5px; margin:7px 0; }
+.trip-intro,.route-key,.trip-note { font-size:12px; line-height:1.7; color:#647269; }
+.trip-badges { display:flex; gap:5px; flex-wrap:wrap; margin:10px 0; }
+.trip-badges span { background:#eef3ed; padding:4px 8px; border-radius:6px; font-size:11px; }
+.day-tabs { display:flex; flex-wrap:wrap; gap:5px; margin:12px 0; }
+.day-tabs button { border:1px solid #d8dfd7; background:#fff; border-radius:7px; padding:7px 9px; font-size:12px; cursor:pointer; color:#385046; }
+.day-tabs button[aria-pressed="true"] { color:#fff; background:#183f38; border-color:#183f38; }
+.day-card { border-top:1px solid #e4e8e1; padding:12px 0; }
+.day-heading { border:0; background:none; padding:0; text-align:left; display:flex; gap:8px; align-items:center; width:100%; cursor:pointer; font:inherit; color:inherit; }
+.day-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.day-heading strong { font-size:14px; }
+.day-heading small { margin-left:auto; color:#7b867d; font-size:10px; white-space:nowrap; }
+.day-path { font-size:12px; line-height:1.8; margin:7px 0; }
+.day-stay { font-size:11px; color:#49675b; background:#f0f4ee; padding:5px 7px; border-radius:5px; }
+.day-detail { font-size:12px; line-height:1.75; color:#617067; margin:8px 0 0; }
+.route-marker { background:none; border:0; }
+.route-marker span { display:grid; place-items:center; width:28px; height:28px; color:#fff; border:2px solid white; border-radius:50%; box-shadow:0 2px 7px #0004; font:bold 12px sans-serif; }
+.route-arrow { background:transparent; border:0; pointer-events:none; }
+.route-arrow span { display:block; font-size:20px; text-shadow:0 0 3px #fff,0 0 3px #fff; }
+.route-label { font-size:11px; border:0; box-shadow:0 1px 6px #0002; padding:3px 7px; }
+.route-key { border-radius:8px; padding:9px; background:#f6f4ec; margin:10px 0; }
+.trip-extras { margin-top:12px; font-size:12px; line-height:1.8; }
+.trip-extras summary { cursor:pointer; font-weight:700; }
+.trip-extras p { margin:8px 0; }
+.trip-extras a,.route-popup a { color:#17756d; }
+.route-popup { font-size:13px; line-height:1.7; max-width:240px; }
+.route-popup strong { display:block; font-size:15px; }
+.route-popup img { width:100%; height:120px; object-fit:cover; border-radius:7px; margin-top:8px; }
+@media(min-width:768px) { body.route-view .leaflet-bottom.leaflet-left { left:365px; } }
+@media(max-width:767px) {
+ .title { top:8px; padding:8px 10px; width:calc(100vw - 72px); left:8px; transform:none; max-width:none; }
+ .title h1 { font-size:16px; } .title p { font-size:10px; }
+ #itineraryPanel { top:auto; left:8px; right:8px; bottom:24px; width:auto; height:34vh; padding:12px 15px; border-radius:16px; }
+ #itineraryPanel h2 { font-size:19px; } .trip-eyebrow { font-size:10px; }
+ .day-tabs { position:sticky; top:-12px; background:#fff; padding:7px 0; z-index:1; }
+ .leaflet-control-zoom { margin-top:12px!important; }
+ .leaflet-popup-content { max-width:210px; }
+}
