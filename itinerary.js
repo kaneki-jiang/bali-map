@@ -10,46 +10,49 @@ const ROUTE_DAYS = [
     ]
   },
   {
-    date:'9/30', title:'ATV · 北上罗威纳', stay:'住：罗威纳',
-    path:'水明漾 → Kuber ATV → 罗威纳黑沙滩',
-    detail:'早上退房，约 10:30 开始 ATV。含准备、骑行、洗漱和午餐预留约 3 小时；下午包车北上，傍晚到罗威纳。当天不再塞皇宫、寺庙或射击。',
+    date:'9/30', title:'水明漾 · 慢启动', stay:'住：乌布',
+    path:'水明漾海滩 → 冲浪/SPA/Beach Club → 晚间乌布',
+    detail:'睡到自然醒。上午安排1.5—2小时初级冲浪或海边散步，中午早午餐，下午从SPA、Potato Head或逛店里选一项。若想看日落可18:30后出发，预计20:30左右抵达乌布；不追求日落则16:30前走，避开一部分拥堵。',
     points:[
       {name:'水明漾住宿区',lat:-8.6905,lng:115.1603},
-      {name:'Kuber ATV',lat:-8.4600,lng:115.3000,img:'',note:'雨林、隧道、泥地线路；以最终确认的基地为准。'},
-      {name:'罗威纳黑沙滩',lat:-8.1597,lng:115.0278,kind:'hotel',note:'黑沙滩与追海豚合并，不再单独绕去 Saba。'}
+      {name:'水明漾海滩 · 初级冲浪',lat:-8.6913,lng:115.1572,note:'上午浪况合适时上1.5—2小时体验课；以当天教练判断为准。'},
+      {name:'Potato Head / SPA（择一）',lat:-8.6796,lng:115.1484,optional:true,note:'下午轻松收尾；Beach Club、SPA和逛店不必全塞。'},
+      {name:'乌布住宿区',lat:-8.5069,lng:115.2625,kind:'hotel',note:'只住一晚，为次日ATV＋漂流和北上罗威纳做衔接。'}
     ]
   },
   {
-    date:'10/1', title:'日出海豚 · 回南部', stay:'住：沙努尔',
-    path:'罗威纳出海 → 早餐休息 → 沙努尔',
-    detail:'清晨约 06:00 出海；海豚是野生动物，不能保证出现。选不围堵、不追逐的船家。早餐后休息，再包车回沙努尔，晚上留白。',
+    date:'10/1', title:'乌布 · 活动日', stay:'住：罗威纳',
+    path:'乌布 → ATV → 阿勇河漂流 → 晚间罗威纳',
+    detail:'这一天不逛皇宫、寺庙和梯田。ATV实际骑行约1.5小时，但加准备、洗澡和午餐约3小时；阿勇河漂流实际下水约2小时，整套再占3—4小时。建议订联票协调接送，16:00—16:30结束后北上，约19:30—20:30入住罗威纳。',
     points:[
-      {name:'罗威纳出海',lat:-8.1450,lng:115.0250,note:'选择尊重野生动物的船家。'},
-      {name:'沙努尔住宿区',lat:-8.6970,lng:115.2630,kind:'hotel',note:'次日从沙努尔码头去佩尼达最顺。'}
+      {name:'乌布住宿区',lat:-8.5069,lng:115.2625,kind:'hotel'},
+      {name:'Kuber ATV',lat:-8.4600,lng:115.3000,note:'雨林、隧道和泥地线路；整个体验块约3小时。'},
+      {name:'阿勇河漂流',lat:-8.4780,lng:115.2450,note:'推荐补充项目；下水约2小时，适合四人活动日。'},
+      {name:'罗威纳黑沙滩住宿区',lat:-8.1597,lng:115.0278,kind:'hotel',note:'晚间抵达，只吃饭休息，为次日清晨出海。'}
     ]
   },
   {
-    date:'10/2', title:'佩尼达 · 海陆双线', stay:'住：沙努尔',
-    path:'沙努尔码头 ⇢ Manta 浮潜 ⇢ 精灵断崖 ⇢ 破碎海滩（可选）⇢ 沙努尔',
-    detail:'Manta 浮潜和精灵断崖是当天两个核心。选海陆组合团，优先真 Manta Point；若船程或海况不合适则改 Manta Bay。精灵断崖只看崖顶；破碎海滩和天神浴池按路况、船班与体力决定。魔鬼鱼为野生动物，不能保证出现。',
+    date:'10/2', title:'海豚 · 瀑布 · 南下', stay:'住：沙努尔',
+    path:'罗威纳出海 → Aling-Aling瀑布 → 沙努尔',
+    detail:'约05:30—08:00出海看日出和海豚，早餐后退房。约10:00到Aling-Aling，安排2.5—3小时向导线路，可选天然滑道和不同高度跳水；不想跳也能只走瀑布。午餐后南下，傍晚入住沙努尔。海豚是野生动物，不能保证出现。',
+    points:[
+      {name:'罗威纳出海追海豚',lat:-8.1450,lng:115.0250,note:'选择不围堵、不追逐的船家。'},
+      {name:'Aling-Aling瀑布',lat:-8.1977,lng:115.1048,note:'距罗威纳约40分钟；向导带领天然滑道与跳水，按个人胆量选择高度。'},
+      {name:'沙努尔住宿区',lat:-8.6970,lng:115.2630,kind:'hotel',note:'次日从沙努尔码头去佩尼达。'}
+    ]
+  },
+  {
+    date:'10/3', title:'佩尼达 · 海陆双线', stay:'住：金巴兰高端度假区',
+    path:'沙努尔码头 ⇢ Manta浮潜 ⇢ 精灵断崖 ⇢ 破碎海滩（可选）⇢ 金巴兰',
+    detail:'早船去佩尼达，上午优先Manta Point/Bay浮潜：整个浮潜块通常约2.5—3.5小时，实际下水约1.5—2小时。午餐后去精灵断崖崖顶；这是日游不可避免的拥挤时段，但Manta更应抢早晨平静海况。破碎海滩和天神浴池按时间取舍，17:00左右回沙努尔后直接入住金巴兰。',
     sea:true,
     points:[
       {name:'沙努尔码头',lat:-8.6718,lng:115.2632,kind:'transport'},
-      {name:'Manta Point / Bay 浮潜',lat:-8.7930,lng:115.5270,note:'固定项目；具体点位由当天海况与船家决定，魔鬼鱼不能保证出现。'},
-      {name:'精灵断崖 Kelingking',lat:-8.7523,lng:115.4726,img:'images/kelingking.jpg',note:'核心必看；崖顶观景。'},
-      {name:'破碎海滩（可选）',lat:-8.7336,lng:115.4453,img:'images/broken.jpg',optional:true,note:'西线顺路的海蚀拱门；时间不足时先删这里。'},
-      {name:'沙努尔码头',lat:-8.6718,lng:115.2632,kind:'transport'}
-    ]
-  },
-  {
-    date:'10/3', title:'Saba 可选 · 入住度假村', stay:'住：金巴兰高端度假区',
-    path:'沙努尔 → Saba 黑沙滩骑马（可选）→ 金巴兰度假村',
-    detail:'上午退房后可向东绕去 Saba：只有想骑马或拍黑沙大片时才去；随后横穿南部前往金巴兰。射击是靠近沙努尔的另一备选，两者二选一。建议15:00左右入住，下午留给泳池、Kubu Beach和日落。',
-    points:[
-      {name:'沙努尔住宿区',lat:-8.6970,lng:115.2630},
-      {name:'Saba 黑沙滩骑马（可选）',lat:-8.6133409,lng:115.3211878,optional:true,note:'湿黑沙、海浪与骑马是重点；单纯看海不值得绕路。',mapUrl:'https://www.google.com/maps/search/?api=1&query=-8.6133409,115.3211878'},
-      {name:'AYANA / 金巴兰度假区',lat:-8.7862167,lng:115.1392722,kind:'hotel',note:'推荐作为最后两晚的高端度假锚点；与原来的南部住宿安排属于同一大区。',mapUrl:'https://www.google.com/maps/search/?api=1&query=-8.7862167,115.1392722'},
-      {name:'射击（另一备选）',lat:-8.7055,lng:115.2520,optional:true,branch:true,note:'靠近沙努尔；与Saba骑马二选一，不纳入主路线连线。'}
+      {name:'Manta Point / Bay浮潜',lat:-8.7930,lng:115.5270,note:'优先早晨；海况不适合Manta Point时改Manta Bay，魔鬼鱼不能保证出现。'},
+      {name:'精灵断崖 Kelingking',lat:-8.7523,lng:115.4726,img:'images/kelingking.jpg',note:'只看崖顶，预留45—60分钟；不下沙滩。'},
+      {name:'破碎海滩（可选）',lat:-8.7336,lng:115.4453,img:'images/broken.jpg',optional:true,note:'时间不足时先删这里和天神浴池。'},
+      {name:'沙努尔码头',lat:-8.6718,lng:115.2632,kind:'transport'},
+      {name:'AYANA / 金巴兰度假区',lat:-8.7862167,lng:115.1392722,kind:'hotel',note:'晚间入住，接下来一天半以度假村和南部海岸为主。'}
     ]
   },
   {
@@ -74,6 +77,11 @@ const ROUTE_DAYS = [
       {name:'登巴萨机场 DPS',lat:-8.7467,lng:115.1668,kind:'transport'}
     ]
   }
+];
+
+const EXTRA_POINTS = [
+  {name:'Saba黑沙滩骑马（未排入）',lat:-8.6133409,lng:115.3211878,note:'位置在沙努尔东北、与金巴兰反方向。若临时放弃Aling-Aling或南部海岸，可再考虑；单纯看沙不值得专程绕路。',mapUrl:'https://www.google.com/maps/search/?api=1&query=-8.6133409,115.3211878'},
+  {name:'Bali Fire射击（未排入）',lat:-8.7055,lng:115.2520,note:'靠近沙努尔，目前优先级低于水明漾、乌布活动和佩尼达。'}
 ];
 
 const routeLayer = L.layerGroup();
@@ -111,6 +119,13 @@ function drawRoute(dayIndex=null) {
     });
     routePoints.forEach((p,j)=>{ if(j<routePoints.length-1) addArrow(p,routePoints[j+1],color).addTo(routeLayer); });
   });
+  if(dayIndex===null){
+    EXTRA_POINTS.forEach(p=>{
+      const icon=L.divIcon({className:'route-marker',html:'<span style="background:#fff;color:#64748b;border-color:#64748b">◇</span>',iconSize:[28,28],iconAnchor:[14,14]});
+      L.marker([p.lat,p.lng],{icon}).bindPopup(popupFor(p,{date:'全程备选',title:'未排入主路线'})).addTo(routeLayer);
+      routeBounds.extend([p.lat,p.lng]);
+    });
+  }
   if(dayIndex===null) map.fitBounds(routeBounds,window.innerWidth<768?{paddingTopLeft:[20,125],paddingBottomRight:[20,280],maxZoom:8}:{paddingTopLeft:[370,145],paddingBottomRight:[35,35],maxZoom:9});
   else map.fitBounds(L.latLngBounds(ROUTE_DAYS[dayIndex].points.map(p=>[p.lat,p.lng])),{padding:[75,75],maxZoom:11});
 }
@@ -119,8 +134,8 @@ function renderPanel() {
   itineraryPanel.innerHTML=`
     <div class="trip-eyebrow">ROUTE DRAFT · 6 NIGHTS</div>
     <h2>先北上，最后住进度假村</h2>
-    <p class="trip-intro">四位同学 · 海景优先 · ATV、海豚、Manta 浮潜与精灵断崖为核心 · 射击可删</p>
-    <div class="trip-badges"><span>水明漾 1晚</span><span>罗威纳 1晚</span><span>沙努尔 2晚</span><span>金巴兰度假区 2晚</span></div>
+    <p class="trip-intro">四位同学 · 海景与活动优先 · 水明漾慢启动 · 乌布ATV＋漂流 · 海豚与佩尼达为核心</p>
+    <div class="trip-badges"><span>水明漾 1晚</span><span>乌布 1晚</span><span>罗威纳 1晚</span><span>沙努尔 1晚</span><span>金巴兰度假区 2晚</span></div>
     <p class="route-key">路线为地理连线，用来理解每天在哪个区域，不代表实际公路或船舶航线。◇ 是可选点。</p>
     <div class="day-tabs"><button data-day="all" aria-pressed="true">全部</button>${ROUTE_DAYS.map((d,i)=>`<button data-day="${i}" aria-pressed="false">${d.date}</button>`).join('')}</div>
     <div class="day-list">${ROUTE_DAYS.map((d,i)=>`
@@ -129,7 +144,8 @@ function renderPanel() {
         <p class="day-path">${d.path}</p><span class="day-stay">${d.stay}</span>
         <p class="day-detail">${d.detail}</p>
       </article>`).join('')}</div>
-    <details class="trip-extras"><summary>为什么没有“天空之境”</summary><p><b>乌鲁瓦图</b>是南部悬崖海岸区域；“天空之门倒影照”在东部的 Lempuyang 寺，两者相距很远。这条路线保留的是 Melasti、Suluban 等海岸，不安排天空之门，也不要求进乌鲁瓦图寺。</p></details>`;
+    <details class="trip-extras"><summary>佩尼达为什么只去一天</summary><p>第二天可以补东线Diamond Beach与Atuh Beach，但必须住岛上才比较顺；这会占掉10月4日的度假村时间。当前按你更在意的Manta与精灵断崖，集中做一日海陆组合。</p></details>
+    <details class="trip-extras"><summary>Saba和射击去哪了</summary><p>两处继续显示在“全部路线”的灰色◇备选点中，但不连入主线。Saba在沙努尔东北，射击靠近沙努尔；当前行程已经由水明漾、乌布活动和佩尼达补满。</p></details>`;
   itineraryPanel.querySelectorAll('[data-day]').forEach(btn=>btn.addEventListener('click',()=>focusDay(btn.dataset.day)));
   itineraryPanel.querySelectorAll('[data-focus]').forEach(btn=>btn.addEventListener('click',()=>focusDay(btn.dataset.focus)));
 }
