@@ -3,7 +3,7 @@
 .view-toggle button { flex:1; border:0; background:transparent; padding:9px 14px; border-radius:8px; cursor:pointer; color:#525952; font:600 13px inherit; }
 .view-toggle button[aria-pressed="true"] { background:#183f38; color:#fff; box-shadow:0 2px 5px #0002; }
 button:focus-visible,a:focus-visible { outline:3px solid #f59e0b; outline-offset:3px; }
-#itineraryPanel { position:fixed; z-index:1000; top:128px; bottom:24px; left:16px; width:336px; border:1px solid #e3e7df; border-radius:18px; overflow:auto; background:#fffffff5; box-shadow:0 8px 28px #14342920; color:#27352d; padding:18px; }
+#itineraryPanel { position:fixed; z-index:1000; top:128px; bottom:24px; left:16px; width:400px; border:1px solid #e3e7df; border-radius:18px; overflow:auto; background:#fffffff5; box-shadow:0 8px 28px #14342920; color:#27352d; padding:18px; overscroll-behavior:contain; }
 #itineraryPanel[hidden] { display:none; }
 .trip-eyebrow { color:#62786c; font-size:11px; letter-spacing:2px; }
 #itineraryPanel h2 { font-size:23px; letter-spacing:-.5px; margin:7px 0; }
@@ -21,6 +21,18 @@ button:focus-visible,a:focus-visible { outline:3px solid #f59e0b; outline-offset
 .day-path { font-size:12px; line-height:1.8; margin:7px 0; }
 .day-stay { font-size:11px; color:#49675b; background:#f0f4ee; padding:5px 7px; border-radius:5px; }
 .day-detail { font-size:12px; line-height:1.75; color:#617067; margin:8px 0 0; }
+.timeline-tools { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:10px; color:#647269; }
+.timeline-tools button { background:#e6efea; border:1px solid #cadbd0; color:#183f38; border-radius:8px; padding:9px 10px; font-size:12px; cursor:pointer; }
+.map-help { font-size:11px; line-height:1.7; color:#647269; margin:8px 0 12px; }
+.map-help summary { cursor:pointer; }
+.day-tabs { position:sticky; top:-18px; background:#fff; padding:8px 0; z-index:2; }
+.day-schedule { margin-top:14px; font-size:12px; }
+.day-schedule summary { cursor:pointer; color:#176358; font-weight:700; padding:8px 0; }
+.timeline { margin:6px 0 0; padding:0; list-style:none; }
+.timeline li { display:grid; grid-template-columns:116px minmax(0,1fr); gap:12px; padding:10px 0; border-bottom:1px solid #edf0ea; font-size:12px; line-height:1.65; }
+.timeline-time { color:#176358; font-weight:650; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
+.timeline-activity { color:#394c41; overflow-wrap:anywhere; }
+.day-note { font-size:11px; line-height:1.75; color:#7b6445; background:#faf5e9; border-radius:8px; padding:9px 10px; margin:12px 0 0; }
 .route-marker { background:none; border:0; }
 .route-marker span { display:grid; place-items:center; width:28px; height:28px; color:#fff; border:2px solid white; border-radius:50%; box-shadow:0 2px 7px #0004; font:bold 12px sans-serif; }
 .route-arrow { background:transparent; border:0; pointer-events:none; }
@@ -34,13 +46,14 @@ button:focus-visible,a:focus-visible { outline:3px solid #f59e0b; outline-offset
 .route-popup { font-size:13px; line-height:1.7; max-width:240px; }
 .route-popup strong { display:block; font-size:15px; }
 .route-popup img { width:100%; height:120px; object-fit:cover; border-radius:7px; margin-top:8px; }
-@media(min-width:768px) { body.route-view .leaflet-bottom.leaflet-left { left:365px; } }
+@media(min-width:768px) { body.route-view .leaflet-bottom.leaflet-left { left:425px; } }
 @media(max-width:767px) {
  .title { top:8px; padding:8px 10px; width:calc(100vw - 72px); left:8px; transform:none; max-width:none; }
  .title h1 { font-size:16px; } .title p { font-size:10px; }
- #itineraryPanel { top:auto; left:8px; right:8px; bottom:24px; width:auto; height:34vh; padding:12px 15px; border-radius:16px; }
+ #itineraryPanel { top:auto; left:8px; right:8px; bottom:24px; width:auto; height:46vh; height:46dvh; padding:12px 15px; border-radius:16px; }
  #itineraryPanel h2 { font-size:19px; } .trip-eyebrow { font-size:10px; }
  .day-tabs { position:sticky; top:-12px; background:#fff; padding:7px 0; z-index:1; }
  .leaflet-control-zoom { margin-top:12px!important; }
  .leaflet-popup-content { max-width:210px; }
+ .timeline li { grid-template-columns:100px minmax(0,1fr); gap:9px; }
 }

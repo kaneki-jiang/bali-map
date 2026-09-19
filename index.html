@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>巴厘岛 · 景点分布与四人行程</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="itinerary.css">
+<link rel="stylesheet" href="itinerary.css?v=20260919-gallery">
+<link rel="stylesheet" href="gallery.css?v=20260919-gallery">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="photo-data.js?v=20260919-gallery"></script>
+<script src="photos.js?v=20260919-gallery"></script>
+<script src="ubud-options.js?v=20260919-gallery"></script>
 <style>
   * { box-sizing: border-box; }
   html,body { margin:0; padding:0; height:100%; font-family:"PingFang SC","Microsoft YaHei",sans-serif; }
@@ -57,7 +61,7 @@
 </head>
 <body>
 <div id="map"></div>
-<div class="title"><h1>巴厘岛 · 一起去看海</h1><p id="viewSubtitle">9.29 晚抵达 — 10.5 晚离开 · 四位同学 · 六晚</p><nav class="view-toggle" aria-label="地图视图"><button id="spotsToggle" type="button" aria-pressed="false">景点分布</button><button id="routeToggle" type="button" aria-pressed="true">行程路线</button></nav></div>
+<div class="title"><h1>巴厘岛 · 看图选行程</h1><p id="viewSubtitle">乌布3晚 · 佩尼达1晚 · 金巴兰2晚</p><nav class="view-toggle" aria-label="地图视图"><button id="ubudToggle" type="button" aria-pressed="true">乌布备选</button><button id="routeToggle" type="button" aria-pressed="false">行程路线</button><button id="spotsToggle" type="button" aria-pressed="false">全岛景点</button></nav></div>
 <aside id="itineraryPanel" aria-label="行程安排"></aside>
 <div class="legend">
   <span class="dot" style="background:#ef4444"></span>南部沿海
@@ -68,6 +72,7 @@
   <span class="dot" style="background:#1c1917"></span>机场
 </div>
 <div id="card" class="hidden"><button id="closeBtn" onclick="hideCard()">✕</button><div id="cardContent"></div></div>
+<dialog id="photoDialog" aria-label="景点实景大图"><button type="button" class="photo-dialog-close" aria-label="关闭大图">✕</button><img alt=""><p class="photo-dialog-caption"></p><p class="photo-dialog-credit"></p><a target="_blank" rel="noopener">查看原图与来源 ↗</a></dialog>
 
 <script>
 const map = L.map('map',{zoomControl:false,attributionControl:true}).setView([-8.42,115.32],10);
@@ -93,6 +98,7 @@ regions.forEach(g=>{
 // 小红书精读笔记链接库
 const X = 'https://www.xiaohongshu.com/search_result/';
 const NOTES = {
+  'penidaofficial': {t:'印尼旅游官网 · 佩尼达东西线介绍', u:'https://www.indonesia.travel/id/id/travel-ideas/adventure/nusa-penida'},
   '3439': {t:'3439赞《去了4次巴厘岛，告诉你应该怎么玩》', u:X+'68d78255000000001203da32?xsec_token=AB7iB1OUKGchXyXfi2CnlBS-c_xjusggGf8Guah6GJB3c%3D&xsec_source='},
   '192':  {t:'192赞《巴厘岛各区域从夯到拉盘点(上)》', u:X+'6a5f704e000000001c011bac?xsec_token=ABsZ1foGANKEIQH4_ibIXJU9Svm0RmoqxMgg0uwezPmlc%3D&xsec_source='},
   '637':  {t:'637赞《巴厘岛7天6晚攻略》', u:X+'6a562d61000000001702c645?xsec_token=ABUA2jo4K9Az0FJO7GPqkjg-CTQ5iSC2Oy-kc9A33jeps%3D&xsec_source='},
@@ -117,7 +123,7 @@ const NOTES = {
   'gobaligo': {t:'gobaligo《Top20分区全攻略》', u:'https://gobaligo.id/zh-cn/blog/bali-top-attractions-guide/'},
 };
 
-// 所有文案均摘自小红书精读笔记原声
+// 景点资料来自小红书笔记及旅游资料；来源见每张卡片，行程安排以每日时间表为准。
 const POIS = [
 {name:'乌鲁瓦图断崖庙', lat:-8.8291, lng:115.0849, region:'south', img:'images/uluwatu.jpg',
  play:'悬崖步道看情人崖海景 → 18:00 Kecak 火舞 → 日落，"巴厘岛颜值天花板"',
@@ -247,13 +253,17 @@ const POIS = [
  play:'海蚀天然拱门 + 绿松石岩石泳池，两景点相连步行 5 分钟，"好看也不拥挤"',
  fit:'和精灵坠崖同线（西线）',
  bad:'不能下水游泳（暗流危险）', refs:['1606','306']},
-{name:'钻石海滩', lat:-8.7747, lng:115.6123, region:'island', img:null,
+{name:'钻石海滩', lat:-8.7761, lng:115.6186, region:'island', img:null,
  play:'白色凿岩阶梯 + 钻石巨岩 + 渐层果冻海（东线）',
  fit:'东线主景点',
  bad:'阶梯陡、风大，拍照注意安全', refs:['637','212']},
-{name:'佩尼达 Manta 浮潜', lat:-8.7930, lng:115.5270, region:'island', img:'images/snorkel.jpg',
+{name:'Atuh 海滩', lat:-8.7725, lng:115.6225, region:'island', img:null,
+ play:'佩尼达东线海湾，与Diamond组合安排；10/2下午体力合适时下海滩坐坐',
+ fit:'想看东线海景、愿意走台阶；本次行程重点之一',
+ bad:'上下台阶需留时间，不把Diamond和Atuh都爬到底；地图位置为近似示意', refs:['penidaofficial']},
+{name:'佩尼达 Manta 浮潜', lat:-8.79547, lng:115.52553, region:'island', img:'images/snorkel.jpg',
  play:'海况允许时前往 Manta Point / Manta Bay，寻找魔鬼鱼并体验珊瑚海域浮潜',
- fit:'本次行程核心海上项目；与精灵断崖组合成海陆一日',
+ fit:'10/2住岛后，10/3早场浮潜，再去精灵断崖；地图标注为Manta Point海域示意',
  bad:'魔鬼鱼为野生动物不能保证出现；Manta Point 船程更长，海况不合适会改点；确认救生衣、向导和淡水冲洗', refs:['refvideo','637','1606']},
 {name:'蓝梦岛 · 恶魔的眼泪', lat:-8.6977, lng:115.4315, region:'island', img:null,
  play:'大浪拍击悬崖激起水雾彩虹；"佩尼达青春版，比佩尼达舒服轻松"',
@@ -269,10 +279,19 @@ const POIS = [
  bad:'机场免税店价格非常高；打车用 Grab 别在机场拦车', refs:['3439','212']},
 ];
 
+preparePhotoPois(POIS,NOTES);
+
 const card = document.getElementById('card');
 const cardContent = document.getElementById('cardContent');
 function hideCard(){ card.classList.add('hidden'); }
 map.on('click', hideCard);
+
+function showSpot(p){
+  const color=COLORS[p.region]||'#17756d';
+  const links=(p.refs||[]).filter(r=>NOTES[r]).map(r=>`<a href="${NOTES[r].u}" target="_blank" rel="noopener">${NOTES[r].t}</a>`).join('<br>');
+  cardContent.innerHTML=`${photoMarkup(p)}<div class="card-body"><h2>${p.name}</h2><span class="tag" style="background:${color}">${REGION_NAME[p.region]||'行程地点'}</span>${p.duration?`<span class="option-duration">建议 ${p.duration}</span>`:''}<div class="sec play"><b>主要看什么 / 玩什么</b>${p.play||p.note||''}</div>${p.fit?`<div class="sec fit"><b>怎么取舍</b>${p.fit}</div>`:''}${p.bad?`<div class="sec bad"><b>留意什么</b>${p.bad}</div>`:''}${p.id?`<button type="button" class="wish-button" data-wish="${p.id}" aria-pressed="${typeof ubudSelected!=='undefined'&&ubudSelected.has(p.id)}">${typeof ubudSelected!=='undefined'&&ubudSelected.has(p.id)?'已加入想去 ✓':'加入想去'}</button>`:''}<div class="src">资料来源（前期笔记内容不代表实时价格）：<br>${links}</div></div>`;
+  card.classList.remove('hidden');
+}
 
 POIS.forEach(p=>{
   const color = COLORS[p.region];
@@ -282,21 +301,11 @@ POIS.forEach(p=>{
   L.marker([p.lat,p.lng],{icon:L.divIcon({className:'poi-label',html:p.name,iconSize:[0,0],iconAnchor:[-12,4]}),interactive:false}).addTo(spotsLayer);
   m.on('click', (e)=>{
     L.DomEvent.stopPropagation(e);
-    const links = p.refs.map(r=>`<a href="${NOTES[r].u}" target="_blank" rel="noopener">${NOTES[r].t}</a>`).join('<br>');
-    cardContent.innerHTML = `
-      ${p.img ? `<img src="${p.img}" alt="${p.name}">` : `<div class="noimg">📷 暂无小红书实图（精读笔记未含）</div>`}
-      <div class="card-body">
-        <h2>${p.name}</h2>
-        <span class="tag" style="background:${color}">${REGION_NAME[p.region]}</span>
-        <div class="sec play"><b>🎯 玩什么</b>${p.play}</div>
-        <div class="sec fit"><b>👤 适合谁</b>${p.fit}</div>
-        <div class="sec bad"><b>⚠️ 坏处 / 避雷</b>${p.bad}</div>
-        <div class="src">📕 来源笔记（点击看原文）：<br>${links}</div>
-      </div>`;
-    card.classList.remove('hidden');
+    showSpot(p);
   });
 });
 </script>
-<script src="itinerary.js"></script>
+<script src="itinerary.js?v=20260919-gallery"></script>
+<script src="ubud-gallery.js?v=20260919-gallery"></script>
 </body>
 </html>
